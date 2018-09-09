@@ -1,0 +1,19 @@
+demo:
+  blog:
+    name: test
+    age: 22
+    address: test env
+    books:
+      - ci
+      - cd
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: io.adonia.springboot.dal.entity
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/leo?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123qwe!@#
