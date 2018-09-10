@@ -1,5 +1,6 @@
 package io.adonia.springboot.dal.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 /**
@@ -18,4 +19,9 @@ public class User {
     private String address;
 
     private String sex;
+
+    @JSONField(name = "link_id")
+    public Integer getId() {
+        return this.id;
+    }
 }

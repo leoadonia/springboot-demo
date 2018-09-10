@@ -60,4 +60,12 @@ public class IndexController {
         return users;
     }
 
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public Integer updateUser(@RequestBody User user) {
+
+        log.info("user: {}.", user);
+
+        return 1;
+    }
+
 }
