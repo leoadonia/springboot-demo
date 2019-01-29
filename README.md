@@ -108,3 +108,92 @@
 
 </assembly>
 ```
+
+### 依赖
+
+对于工程中的依赖的jar包，可以通过如下插件，将其拷贝至一个目录下。
+
+```
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <version>3.1.1</version>
+    <executions>
+        <execution>
+            <phase>prepare-package</phase>
+            <goals>
+                <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+                <!-- 将所有的依赖的jar包拷贝至 target/lib -->
+                <outputDirectory>target/lib</outputDirectory>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+                <includeScope>compile</includeScope>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### 工程jar包
+
+spring boot的插件，会把所有的依赖，达成一个jar包，即所谓的　`fat jar`，如果按照上述使用assembly打包的话，需要做定制，输出单个jar包。
+
+```
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <layout>ZIP</layout>
+        <includes>
+            <!-- 项目启动jar包中排除依赖包 -->
+            <include>
+                <groupId>non-exists</groupId>
+                <artifactId>non-exists</artifactId>
+            </include>
+        </includes>
+    </configuration>
+</plugin>
+```
+
+spring boot会在jar包中设置classpath，main-class之类的，如果按照上面的方式排除依赖的话，需要增加如下插件：
+
+```
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>3.1.0</version>
+    <configuration>
+        <archive>
+            <manifest>
+                <!-- 项目启动类 -->
+                <mainClass>io.observability.fp.backend.FpBackendApplication</mainClass>
+                <!-- 依赖的jar的目录前缀 -->
+                <classpathPrefix>../lib</classpathPrefix>
+                <addClasspath>true</addClasspath>
+            </manifest>
+        </archive>
+        <includes>
+            <!-- 只打包指定目录的文件 -->
+            <include>io/observability/fp/**</include>
+        </includes>
+    </configuration>
+</plugin>
+```
+
+注意，按照上述配置，可能需要手动加依赖，解析yaml(如果spring boot的配置是yaml格式)。
+
+```
+<dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId>
+</dependency>
+```
+
+## 启动
+
+```
+java -jar boot/xxx.jar
+```
